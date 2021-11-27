@@ -1,30 +1,33 @@
+import {service} from '@loopback/core';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {Usuarios} from '../models';
 import {UsuariosRepository} from '../repositories';
+import {AutenticacionService} from '../services';
+/************************************** importando el paquete fetch */
+const fetch = require('node-fetch');
+/****************************************************************** */
 
 export class UsuariosController {
   constructor(
     @repository(UsuariosRepository)
-    public usuariosRepository : UsuariosRepository,
-  ) {}
+    public usuariosRepository: UsuariosRepository,
+    /********************************************* importando servicio de autenticacion de services */
+    @service(AutenticacionService)
+    public servicioAutenticacion: AutenticacionService
+    /********************************************************************************************** */
+  ) { }
 
   @post('/usuarios')
   @response(200, {
@@ -44,7 +47,45 @@ export class UsuariosController {
     })
     usuarios: Omit<Usuarios, 'id'>,
   ): Promise<Usuarios> {
-    return this.usuariosRepository.create(usuarios);
+    /***************************** llamando a los metodos de autenticacion service */
+    let clave = this.servicioAutenticacion.GenerarClave();                              /**********generando clave */
+    let claveCifrada = this.servicioAutenticacion.cifrarClave(clave);                  /***********cifrando clave  */
+    /**************************************************************************** */
+    /****************************************asignado la clave cifrada al usuario */
+    usuarios.clave = claveCifrada;
+    /**************************************************************************** */
+    let p = await this.usuariosRepository.create(usuarios);  /***************** creando un usuario en el repositorio */
+    /******************************************************************************************************************** */
+
+    /********************************************** notificando al usuario clave, usuario y rol correo y mensaje de texto */
+    /******************* creando parametros del mensaje **************************************************************** */
+    /********************************************************correo electronico*******************parametros *************/
+    let destino = usuarios.correo;
+    let asunto = 'Registro exitoso en La pagina; Mascota Feliz te saluda';
+    let contenido = `Bienvenido  ${usuarios.nombres}, veterinaria Mascota Feliz le informa,  su nombre de usuario es:  ${usuarios.correo}, su contraseña es:  ${clave}, y su rol es: ${usuarios.rol}`;
+    /************************************************************************************************************************* */
+
+    /******************************************************************************mensaje de texto *******************parametros */
+    let telefono = usuarios.telefono;
+    /************************************************************************************************************************************************ */
+
+    /************************************************* ruta de enlace para enviar el mensaje utilizando spyder y su conexion *********************** */
+    fetch(`http://127.0.0.1:5000/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+      .then((data: any) => {
+        console.log(data);
+      })
+    /**********************************************correo electronico ************************************************ */
+    fetch(`http://127.0.0.1:5000/sms?mensaje=${contenido}&telefono=${telefono}`)
+      .then((data: any) => {
+        console.log(data);
+      })
+    /***************************************************************************************************************** */
+    return p;
+
+    /******************************************************************************************************************* */
+
+
+
   }
 
   @get('/usuarios/count')
