@@ -34,9 +34,9 @@ export class AutenticacionService {
   /*********************************************************************************************** */
 
   /********************************************* Metodo Identificar Usuarios ********************* */
-  IdentificarUsuarios(usuario: string, clave: string) {
+  IdentificarUsuarios(usuario: string, clave: string, rol:string) {
     try {
-      let p = this.usuariosRepository.findOne({where: {correo: usuario, clave: clave}});
+      let p = this.usuariosRepository.findOne({where: {correo: usuario, clave: clave, rol:rol}});
       if (p) {
         return p;
       }

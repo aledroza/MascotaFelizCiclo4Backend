@@ -41,7 +41,7 @@ export class UsuariosController {
   async identificarUsuarios(
     @requestBody() credenciales: Credenciales
   ){
-    let p = await this.servicioAutenticacion.IdentificarUsuarios(credenciales.usuario,credenciales.clave);
+    let p = await this.servicioAutenticacion.IdentificarUsuarios(credenciales.usuario,credenciales.clave,credenciales.rol);
     if (p) {
       let token = this.servicioAutenticacion.GenerarTokenJWT(p);
       return{
