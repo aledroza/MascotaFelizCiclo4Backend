@@ -9,10 +9,11 @@ import {
 } from '@loopback/repository';
 import {
   del, get,
-  getModelSchemaRef, param, patch, post, put, requestBody,
+  getModelSchemaRef, HttpErrors, param, patch, post, put, requestBody,
   response
 } from '@loopback/rest';
-import {Usuarios} from '../models';
+import {Llaves} from '../config/llaves';
+import {Credenciales, Usuarios} from '../models';
 import {UsuariosRepository} from '../repositories';
 import {AutenticacionService} from '../services';
 /************************************** importando el paquete fetch */
@@ -28,6 +29,37 @@ export class UsuariosController {
     public servicioAutenticacion: AutenticacionService
     /********************************************************************************************** */
   ) { }
+
+  /*****************************************metodo identificar usuarios ******************************* */
+  @post("/identificarUsuarios",{
+    responses:{
+      '200':{
+        description: "Identificacion de Usuarios"
+      }
+    }
+  })
+  async identificarUsuarios(
+    @requestBody() credenciales: Credenciales
+  ){
+    let p = await this.servicioAutenticacion.IdentificarUsuarios(credenciales.usuario,credenciales.clave);
+    if (p) {
+      let token = this.servicioAutenticacion.GenerarTokenJWT(p);
+      return{
+        datos: {
+          nombre: p.nombres,
+          correo: p.correo,
+          rol: p.rol,
+          id: p.id
+        },
+        tk: token
+      }
+
+    } else {
+      throw new HttpErrors[401]("Datos inválidos");
+
+    }
+  }
+  /**************************************************************************************************** */
 
   @post('/usuarios')
   @response(200, {
@@ -70,12 +102,14 @@ export class UsuariosController {
     /************************************************************************************************************************************************ */
 
     /************************************************* ruta de enlace para enviar el mensaje utilizando spyder y su conexion *********************** */
-    fetch(`http://127.0.0.1:5000/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+    //fetch(`http://127.0.0.1:5000/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
+    fetch(`${Llaves.urlServicioNotificaciones}/envio-correo?correo_destino=${destino}&asunto=${asunto}&contenido=${contenido}`)
       .then((data: any) => {
         console.log(data);
       })
     /**********************************************correo electronico ************************************************ */
-    fetch(`http://127.0.0.1:5000/sms?mensaje=${contenido}&telefono=${telefono}`)
+    //fetch(`http://127.0.0.1:5000/sms?mensaje=${contenido}&telefono=${telefono}`)
+    fetch(`${Llaves.urlServicioNotificaciones}/sms?mensaje=${contenido}&telefono=${telefono}`)
       .then((data: any) => {
         console.log(data);
       })
