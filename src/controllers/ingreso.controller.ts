@@ -1,30 +1,27 @@
+import {authenticate} from '@loopback/authentication';
 import {
   Count,
   CountSchema,
   Filter,
   FilterExcludingWhere,
   repository,
-  Where,
+  Where
 } from '@loopback/repository';
 import {
-  post,
-  param,
-  get,
-  getModelSchemaRef,
-  patch,
-  put,
-  del,
-  requestBody,
-  response,
+  del, get,
+  getModelSchemaRef, param, patch, post, put, requestBody,
+  response
 } from '@loopback/rest';
 import {Ingreso} from '../models';
 import {IngresoRepository} from '../repositories';
 
+@authenticate("asesor") // llamando al metodo de autenticacion de administradores
 export class IngresoController {
   constructor(
     @repository(IngresoRepository)
-    public ingresoRepository : IngresoRepository,
-  ) {}
+    public ingresoRepository: IngresoRepository,
+  ) { }
+
 
   @post('/ingresos')
   @response(200, {
@@ -46,7 +43,7 @@ export class IngresoController {
   ): Promise<Ingreso> {
     return this.ingresoRepository.create(ingreso);
   }
-
+  @authenticate.skip()  // desprotegiendo una clase.
   @get('/ingresos/count')
   @response(200, {
     description: 'Ingreso model count',
