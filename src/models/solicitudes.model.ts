@@ -1,6 +1,8 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Cliente} from './cliente.model';
 import {Afiliaciones} from './afiliaciones.model';
+import {Administrador} from './administrador.model';
+import {Asesor} from './asesor.model';
 
 @model()
 export class Solicitudes extends Entity {
@@ -71,11 +73,44 @@ export class Solicitudes extends Entity {
   })
   contrato: string;
 
+  /*******************************modulo administrador********************************************************* */
+  @property({
+    type: 'string',
+    required: true,
+  })
+  ciudad: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  asesor: string;
+  /************************************************************************************************************ */
+  /************************************************modulo veterinaria********************************************* */
+  @property({
+    type: 'string',
+    required: true,
+  })
+  direccion: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  comentario: string;
+  /*************************************************************************************************************** */
+
   @belongsTo(() => Cliente)
   clienteId: string;
 
   @belongsTo(() => Afiliaciones)
   afiliacionesId: string;
+
+  @belongsTo(() => Administrador)
+  administradorId: string;
+
+  @belongsTo(() => Asesor)
+  asesorId: string;
 
   constructor(data?: Partial<Solicitudes>) {
     super(data);

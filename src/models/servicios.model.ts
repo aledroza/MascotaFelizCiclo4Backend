@@ -1,9 +1,8 @@
 import {Entity, model, property, belongsTo} from '@loopback/repository';
 import {Administrador} from './administrador.model';
-import {Asesor} from './asesor.model';
 
 @model()
-export class Plan extends Entity {
+export class Servicios extends Entity {
   @property({
     type: 'string',
     id: true,
@@ -27,20 +26,13 @@ export class Plan extends Entity {
     type: 'string',
     required: true,
   })
-  tipo: string;
+  proveedor: string;
 
   @property({
     type: 'string',
     required: true,
   })
   precio: string;
-
-  /*****************************Modulo Administrador **************** */
-  @property({
-    type: 'string',
-    required: true,
-  })
-  proveedor: string;
 
   @property({
     type: 'string',
@@ -53,26 +45,17 @@ export class Plan extends Entity {
     required: true,
   })
   ciudad: string;
-  /****************************************************************** */
-
-  @property({
-    type: 'string',
-  })
-  mascotaId?: string;
 
   @belongsTo(() => Administrador)
   administradorId: string;
 
-  @belongsTo(() => Asesor)
-  asesorId: string;
-
-  constructor(data?: Partial<Plan>) {
+  constructor(data?: Partial<Servicios>) {
     super(data);
   }
 }
 
-export interface PlanRelations {
+export interface ServiciosRelations {
   // describe navigational properties here
 }
 
-export type PlanWithRelations = Plan & PlanRelations;
+export type ServiciosWithRelations = Servicios & ServiciosRelations;

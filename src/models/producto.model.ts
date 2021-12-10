@@ -1,4 +1,6 @@
-import {Entity, model, property} from '@loopback/repository';
+import {Entity, model, property, belongsTo} from '@loopback/repository';
+import {Administrador} from './administrador.model';
+import {Asesor} from './asesor.model';
 
 @model()
 export class Producto extends Entity {
@@ -26,6 +28,26 @@ export class Producto extends Entity {
     required: true,
   })
   tipo: string;
+  /*****************************modulo Administrador****************** */
+  @property({
+    type: 'string',
+    required: true,
+  })
+  proveedor: string;
+
+  @property({
+    type: 'string',
+    required: true,
+  })
+  departamento: string;
+  /******************************************************************* */
+  /*****************************Modulo Asesor************************************** */
+  @property({
+    type: 'string',
+    required: true,
+  })
+  ciudad: string;
+  /******************************************************************************** */
 
   @property({
     type: 'string',
@@ -37,6 +59,12 @@ export class Producto extends Entity {
     type: 'string',
   })
   pedidoId?: string;
+
+  @belongsTo(() => Administrador)
+  administradorId: string;
+
+  @belongsTo(() => Asesor)
+  asesorId: string;
 
   constructor(data?: Partial<Producto>) {
     super(data);

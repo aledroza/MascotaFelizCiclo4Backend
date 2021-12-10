@@ -2,6 +2,7 @@ import {Entity, model, property, hasOne, hasMany} from '@loopback/repository';
 import {Registro} from './registro.model';
 import {Ingreso} from './ingreso.model';
 import {Cliente} from './cliente.model';
+import {Administrador} from './administrador.model';
 
 @model()
 export class Usuarios extends Entity {
@@ -50,7 +51,7 @@ export class Usuarios extends Entity {
 
   @property({
     type: 'string',
-    required: true,
+    required: false,
   })
   autenticacion: string;
 
@@ -68,6 +69,9 @@ export class Usuarios extends Entity {
 
   @hasMany(() => Cliente)
   clientes: Cliente[];
+
+  @hasMany(() => Administrador)
+  administradors: Administrador[];
 
   constructor(data?: Partial<Usuarios>) {
     super(data);

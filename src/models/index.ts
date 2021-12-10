@@ -11,3 +11,8 @@ export * from './historia-clinica.model';
 export * from './cuenta.model';
 export * from './producto.model';
 export * from './plan.model';
+export * from './administrador.model';
+export * from './asesor.model';
+export * from './servicios.model';
+export * from './informes-a.model';
+export * from './informes-b.model';

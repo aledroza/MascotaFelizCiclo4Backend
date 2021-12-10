@@ -10,3 +10,8 @@ export * from './historia-clinica.repository';
 export * from './cuenta.repository';
 export * from './producto.repository';
 export * from './plan.repository';
+export * from './administrador.repository';
+export * from './asesor.repository';
+export * from './servicios.repository';
+export * from './informes-a.repository';
+export * from './informes-b.repository';
